@@ -2,13 +2,11 @@
 
 Felipe Aihara - NUSP: 17889351 e Cleber Fernandes - NUSP: 17884589
 
-### Cenários escolhidos e descrição
+### Cenários escolhidos e breve descrição
 
 - O primeiro cenário escolhido foi um de race condition.  
-- O segundo cenário escolhido foi um de deadlock. A thread A começa pegando o mutex A. Depois, ela é interrompida pela thread B, que pega o mutex B. 
-Quando a thread A volta a executar, ela tenta pegar o mutex B, mas não consegue porque a thread B já o tem. Quando a thread B volta a executar, ela tenta
-pegar o mutex A, mas não consegue porque a thread A já o tem. Assim, ambas as threads ficam suspensas para sempre, uma esperando o mutex da outra (o que 
-se configura como um deadlock).
+- O segundo cenário escolhido foi um de deadlock. A thread A tenta adquirir o mutex A. Se consegue, simula uma realização de trabalho com ele. Depois,
+tenta adquirir o mutex B. Se consegue, simula uma realização de trabalho com ele. Idem para a thread B, mas na ordem inversa (pega mutex B primeiro).
 
 ### Planejamento de testes (race condition)
 
@@ -31,7 +29,6 @@ se configura como um deadlock).
 
 - O que estava errado antes?
 - Como você corrigiu o erro?
-- O que mudou com a correção?
 - OBS.: colocar as evidências nas pastas de cada código (código_original/ e codigo_corrigido)
 
 ### Avaliação do código do Cleber (revisão feita por Felipe, incluindo evidências que os testes foram realizados)
