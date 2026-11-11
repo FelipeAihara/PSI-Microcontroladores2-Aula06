@@ -1,98 +1,93 @@
+/*
+ * Demonstração de deadlock: duas threads, dois mutex, ordem de aquisição invertida.
+ *
+ *   thread1: pega A -> (espera) -> tenta B
+ *   thread2: pega B -> (espera) -> tenta A
+ *
+ * A main continua imprimindo um "heartbeat" para mostrar que o sistema
+ * NÃO travou por inteiro: só as duas threads envolvidas ficam bloqueadas.
+ */
+
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
-/* ------------------------------------------------------------------ *
- * Demonstracao de Race Condition em Zephyr RTOS
- *
- * Duas threads de MESMA prioridade incrementam, cada uma, um contador
- * global NUM_INCREMENTS vezes. Se o acesso ao contador fosse atomico
- * e protegido, o valor final teria que ser exatamente
- * 2 * NUM_INCREMENTS. Sem sincronizacao, threads podem ser preemptadas
- * (pelo scheduler, por tick de sistema ou por uma ISR) no MEIO do
- * padrao ler-modificar-escrever, perdendo incrementos.
- *
- * ------------------------------------------------------------------ */
+#define STACK_SIZE  1024
+#define PRIORIDADE_A  5
+#define PRIORIDADE_B 5
 
-#define NUM_THREADS     2
-#define NUM_INCREMENTS  2000
-#define STACK_SIZE      1024
-#define THREAD_PRIORITY 5
+/* Janela entre o primeiro e o segundo lock (facilita o deadlock). */
+#define JANELA_MS   10
 
-/*
- * Alarga artificialmente a janela entre "ler" e "escrever" o recurso
- * compartilhado. O bug (acesso nao atomico) ja existe sem isso - aqui
- * so aumentamos a probabilidade de uma troca de contexto acontecer
- * durante o acesso desprotegido, tornando a falha visivel de forma
- * confiavel em poucas execucoes, em vez de depender da sorte de um
- * tick de interrupcao cair exatamente entre duas instrucoes.
- */
-#define CRITICAL_SECTION_DELAY_US 50
+K_MUTEX_DEFINE(mutex_a);
+K_MUTEX_DEFINE(mutex_b);
 
-/* "volatile" aqui so evita que o compilador otimize o acesso embora;
- * ela NAO torna o acesso atomico nem substitui sincronizacao. */
-static volatile uint32_t shared_counter;
-
-static void increment_shared_counter(void)
+void thread1(void *p1, void *p2, void *p3)
 {
-
-	/* 1. LER o valor atual do recurso compartilhado */
-	uint32_t temp = shared_counter;
-
-	/* 2. "Processar" o valor - simula algum trabalho sobre o dado lido.
-	 *    E exatamente aqui, entre o passo 1 e o passo 3, que outra
-	 *    thread pode ser escalonada, ler o MESMO valor antigo e
-	 *    tambem calcular temp + 1 a partir dele. */
-	k_busy_wait(CRITICAL_SECTION_DELAY_US);
-	temp = temp + 1;
-
-	/* 3. ESCREVER o valor de volta no recurso compartilhado.
-	 *    Se outra thread fez o mesmo entre os passos 1 e 3, uma das
-	 *    duas escritas sera perdida: o incremento "desaparece". */
-	shared_counter = temp;
-
-}
-
-static void counter_thread(void *p1, void *p2, void *p3)
-{
-	const char *name = (const char *)p1;
-
+	ARG_UNUSED(p1);
 	ARG_UNUSED(p2);
 	ARG_UNUSED(p3);
 
-	for (int i = 0; i < NUM_INCREMENTS; i++) {
-		increment_shared_counter();
-	}
+	while (1) {
+        printk("[%u] thread1: heartbeat (sistema vivo)\n", k_uptime_get_32());
+		printk("[%u] T1: tentando pegar A\n", k_uptime_get_32());
+		k_mutex_lock(&mutex_a, K_FOREVER);
+		printk("[%u] T1: pegou A\n", k_uptime_get_32());
 
-	printk("Thread %s terminou suas %d incrementacoes\n", name, NUM_INCREMENTS);
+		k_msleep(JANELA_MS);
+
+		printk("[%u] T1: tentando pegar B\n", k_uptime_get_32());
+		k_mutex_lock(&mutex_b, K_FOREVER);
+		printk("[%u] T1: pegou B (tem A e B)\n", k_uptime_get_32());
+
+		/* Seção crítica usando os dois recursos */
+
+		k_mutex_unlock(&mutex_b);
+		k_mutex_unlock(&mutex_a);
+		printk("[%u] T1: soltou A e B\n", k_uptime_get_32());
+
+		k_msleep(100);
+	}
 }
 
-K_THREAD_DEFINE(thread_a, STACK_SIZE, counter_thread, "A", NULL, NULL,
-		THREAD_PRIORITY, 0, 0);
-
-K_THREAD_DEFINE(thread_b, STACK_SIZE, counter_thread, "B", NULL, NULL,
-		THREAD_PRIORITY, 0, 0);
-
-void main(void)
+void thread2(void *p1, void *p2, void *p3)
 {
-	uint32_t expected = NUM_THREADS * NUM_INCREMENTS;
+	ARG_UNUSED(p1);
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
 
-	printk("\n=== Demonstracao de Race Condition (Zephyr RTOS) ===\n");
-	printk("Threads:........... %d\n", NUM_THREADS);
-	printk("Incrementos/thread: %d\n", NUM_INCREMENTS);
-	printk("Valor esperado:.... %u\n\n", expected);
+	while (1) {
+        printk("[%u] thread2: heartbeat (sistema vivo)\n", k_uptime_get_32());
+		printk("[%u] T2: tentando pegar B\n", k_uptime_get_32());
+		k_mutex_lock(&mutex_b, K_FOREVER);
+		printk("[%u] T2: pegou B\n", k_uptime_get_32());
 
-	/* Espera as duas threads terminarem antes de ler o resultado final */
-	k_thread_join(thread_a, K_FOREVER);
-	k_thread_join(thread_b, K_FOREVER);
+		k_msleep(JANELA_MS);
 
-	printk("\nValor final do contador: %u\n", shared_counter);
-	printk("Valor esperado:          %u\n", expected);
+		printk("[%u] T2: tentando pegar A\n", k_uptime_get_32());
+		k_mutex_lock(&mutex_a, K_FOREVER);
+		printk("[%u] T2: pegou A (tem A e B)\n", k_uptime_get_32());
 
-	if (shared_counter == expected) {
-		printk("RESULTADO: OK - nenhuma atualizacao perdida\n");
-	} else {
-		printk("RESULTADO: FALHA - %u atualizacao(oes) perdida(s) "
-		       "por race condition\n",
-		       expected - shared_counter);
+		/* Seção crítica usando os dois recursos */
+
+		k_mutex_unlock(&mutex_a);
+		k_mutex_unlock(&mutex_b);
+		printk("[%u] T2: soltou A e B\n", k_uptime_get_32());
+
+		k_msleep(100);
 	}
+}
+
+K_THREAD_DEFINE(t1_id, STACK_SIZE, thread1, NULL, NULL, NULL, PRIORIDADE_A, 0, 0);
+K_THREAD_DEFINE(t2_id, STACK_SIZE, thread2, NULL, NULL, NULL, PRIORIDADE_B, 0, 0);
+
+int main(void)
+{
+	printk("=== Demo de deadlock ===\n");
+
+	while (1) {
+		k_msleep(1000);
+		printk("[%u] main: heartbeat (sistema vivo)\n", k_uptime_get_32());
+	}
+
+	return 0;
 }
