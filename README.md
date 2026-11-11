@@ -4,8 +4,8 @@ Felipe Aihara - NUSP: 17889351 e Cleber Fernandes - NUSP: 17884589
 
 ### Cenários escolhidos e breve descrição
 
-- O primeiro cenário escolhido foi um de race condition.  
-- O segundo cenário escolhido foi um de deadlock. A thread A tenta adquirir o mutex A. Se consegue, simula uma realização de trabalho com ele. Depois,
+- O primeiro cenário escolhido foi um de race condition (codigo_cleber).  
+- O segundo cenário escolhido foi um de deadlock (codigo_felipe). A thread A tenta adquirir o mutex A. Se consegue, simula uma realização de trabalho com ele. Depois,
 tenta adquirir o mutex B. Se consegue, simula uma realização de trabalho com ele. Idem para a thread B, mas na ordem inversa (pega mutex B primeiro).
 
 ### Planejamento de testes (race condition)
