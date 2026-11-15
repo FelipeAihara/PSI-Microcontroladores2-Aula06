@@ -1,0 +1,19 @@
+=== Demo de deadlock ===
+[7] thread_a: heartbeat (sistema vivo)
+[10] T_A: tentando pegar A
+[13] T_A: pegou A
+[14] thread_b: heartbeat (sistema vivo)
+[18] T_B: tentando pegar B
+[20] T_B: pegou B
+[24] T_A: tentando pegar B
+[32] T_B: tentando pegar A
+[1007] main: heartbeat (sistema vivo)
+[2010] main: heartbeat (sistema vivo)
+[3014] main: heartbeat (sistema vivo)
+[4017] main: heartbeat (sistema vivo)
+[5020] main: heartbeat (sistema vivo)
+[6024] main: heartbeat (sistema vivo)
+[7027] main: heartbeat (sistema vivo)
+[8031] main: heartbeat (sistema vivo)
+[9034] main: heartbeat (sistema vivo)
+[10037] main: heartbeat (sistema vivo)
