@@ -13,9 +13,9 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 | Caso de Teste | Pré-condição | Etapas de Teste | Pós-condição Esperada |
 |----------------|---------------|------------------|------------------------|
-| 1 | ... | ... | ... |
-| 2 | ... | ... | ... |
-| 3 | ... | ... | ... |
+| 1 | PRIORIDADE_A = PRIORIDADE_B | Rodar o código e ler a porta serial | Contador deveria assumir o valor de 2000 |
+| 2 | PRIORIDADE_A > PRIORIDADE_B | Rodar o código e ler a porta serial | Contador deveria assumir o valor de 2000 |
+| 3 | PRIORIDADE_A < PRIORIDADE_B | Rodar o código e ler a porta serial | Contador deveria assumir o valor de 2000 |
 
 ### Planejamento de testes (race condition - serial)
 
