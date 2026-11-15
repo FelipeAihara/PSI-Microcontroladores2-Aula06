@@ -1,0 +1,182 @@
+=== Demo de deadlock ===
+[7] thread_b: heartbeat (sistema vivo)
+[10] T_B: tentando pegar 1
+[13] T_B: pegou B
+[14] thread_a: heartbeat (sistema vivo)
+[18] T_A: tentando pegar A
+[24] T_B: tentando pegar 2
+[27] T_B: pegou A (tem A e B)
+[29] T_B: soltou A e B
+[31] T_A: pegou A
+[43] T_A: tentando pegar B
+[45] T_A: pegou B (tem A e B)
+[48] T_A: soltou A e B
+[132] thread_b: heartbeat (sistema vivo)
+[135] T_B: tentando pegar 1
+[138] T_B: pegou B
+[149] T_B: tentando pegar 2
+[152] T_B: pegou A (tem A e B)
+[154] T_B: soltou A e B
+[157] thread_a: heartbeat (sistema vivo)
+[160] T_A: tentando pegar A
+[163] T_A: pegou A
+[175] T_A: tentando pegar B
+[177] T_A: pegou B (tem A e B)
+[180] T_A: soltou A e B
+[257] thread_b: heartbeat (sistema vivo)
+[260] T_B: tentando pegar 1
+[263] T_B: pegou B
+[275] T_B: tentando pegar 2
+[277] T_B: pegou A (tem A e B)
+[280] T_B: soltou A e B
+[282] thread_a: heartbeat (sistema vivo)
+[286] T_A: tentando pegar A
+[288] T_A: pegou A
+[300] T_A: tentando pegar B
+[302] T_A: pegou B (tem A e B)
+[305] T_A: soltou A e B
+[382] thread_b: heartbeat (sistema vivo)
+[386] T_B: tentando pegar 1
+[388] T_B: pegou B
+[400] T_B: tentando pegar 2
+[402] T_B: pegou A (tem A e B)
+[405] T_B: soltou A e B
+[407] thread_a: heartbeat (sistema vivo)
+[411] T_A: tentando pegar A
+[413] T_A: pegou A
+[425] T_A: tentando pegar B
+[428] T_A: pegou B (tem A e B)
+[430] T_A: soltou A e B
+[507] thread_b: heartbeat (sistema vivo)
+[511] T_B: tentando pegar 1
+[513] T_B: pegou B
+[525] T_B: tentando pegar 2
+[528] T_B: pegou A (tem A e B)
+[530] T_B: soltou A e B
+[533] thread_a: heartbeat (sistema vivo)
+[536] T_A: tentando pegar A
+[539] T_A: pegou A
+[551] T_A: tentando pegar B
+[553] T_A: pegou B (tem A e B)
+[556] T_A: soltou A e B
+[633] thread_b: heartbeat (sistema vivo)
+[636] T_B: tentando pegar 1
+[639] T_B: pegou B
+[651] T_B: tentando pegar 2
+[653] T_B: pegou A (tem A e B)
+[656] T_B: soltou A e B
+[658] thread_a: heartbeat (sistema vivo)
+[661] T_A: tentando pegar A
+[664] T_A: pegou A
+[676] T_A: tentando pegar B
+[678] T_A: pegou B (tem A e B)
+[681] T_A: soltou A e B
+[758] thread_b: heartbeat (sistema vivo)
+[761] T_B: tentando pegar 1
+[764] T_B: pegou B
+[776] T_B: tentando pegar 2
+[778] T_B: pegou A (tem A e B)
+[781] T_B: soltou A e B
+[783] thread_a: heartbeat (sistema vivo)
+[787] T_A: tentando pegar A
+[789] T_A: pegou A
+[801] T_A: tentando pegar B
+[804] T_A: pegou B (tem A e B)
+[806] T_A: soltou A e B
+[883] thread_b: heartbeat (sistema vivo)
+[887] T_B: tentando pegar 1
+[889] T_B: pegou B
+[901] T_B: tentando pegar 2
+[904] T_B: pegou A (tem A e B)
+[906] T_B: soltou A e B
+[909] thread_a: heartbeat (sistema vivo)
+[912] T_A: tentando pegar A
+[915] T_A: pegou A
+[926] T_A: tentando pegar B
+[929] T_A: pegou B (tem A e B)
+[932] T_A: soltou A e B
+[1007] main: heartbeat (sistema vivo)
+[1010] thread_b: heartbeat (sistema vivo)
+[1014] T_B: tentando pegar 1
+[1016] T_B: pegou B
+[1028] T_B: tentando pegar 2
+[1031] T_B: pegou A (tem A e B)
+[1034] T_B: soltou A e B
+[1036] thread_a: heartbeat (sistema vivo)
+[1040] T_A: tentando pegar A
+[1042] T_A: pegou A
+[1054] T_A: tentando pegar B
+[1057] T_A: pegou B (tem A e B)
+[1059] T_A: soltou A e B
+[1136] thread_b: heartbeat (sistema vivo)
+[1140] T_B: tentando pegar 1
+[1142] T_B: pegou B
+[1154] T_B: tentando pegar 2
+[1157] T_B: pegou A (tem A e B)
+[1159] T_B: soltou A e B
+[1162] thread_a: heartbeat (sistema vivo)
+[1165] T_A: tentando pegar A
+[1168] T_A: pegou A
+[1180] T_A: tentando pegar B
+[1182] T_A: pegou B (tem A e B)
+[1185] T_A: soltou A e B
+[1262] thread_b: heartbeat (sistema vivo)
+[1265] T_B: tentando pegar 1
+[1268] T_B: pegou B
+[1280] T_B: tentando pegar 2
+[1282] T_B: pegou A (tem A e B)
+[1285] T_B: soltou A e B
+[1288] thread_a: heartbeat (sistema vivo)
+[1291] T_A: tentando pegar A
+[1294] T_A: pegou A
+[1306] T_A: tentando pegar B
+[1308] T_A: pegou B (tem A e B)
+[1311] T_A: soltou A e B
+[1388] thread_b: heartbeat (sistema vivo)
+[1391] T_B: tentando pegar 1
+[1394] T_B: pegou B
+[1406] T_B: tentando pegar 2
+[1408] T_B: pegou A (tem A e B)
+[1411] T_B: soltou A e B
+[1413] thread_a: heartbeat (sistema vivo)
+[1417] T_A: tentando pegar A
+[1420] T_A: pegou A
+[1432] T_A: tentando pegar B
+[1434] T_A: pegou B (tem A e B)
+[1437] T_A: soltou A e B
+[1513] thread_b: heartbeat (sistema vivo)
+[1517] T_B: tentando pegar 1
+[1520] T_B: pegou B
+[1532] T_B: tentando pegar 2
+[1534] T_B: pegou A (tem A e B)
+[1537] T_B: soltou A e B
+[1539] thread_a: heartbeat (sistema vivo)
+[1543] T_A: tentando pegar A
+[1545] T_A: pegou A
+[1557] T_A: tentando pegar B
+[1560] T_A: pegou B (tem A e B)
+[1563] T_A: soltou A e B
+[1639] thread_b: heartbeat (sistema vivo)
+[1643] T_B: tentando pegar 1
+[1645] T_B: pegou B
+[1657] T_B: tentando pegar 2
+[1660] T_B: pegou A (tem A e B)
+[1663] T_B: soltou A e B
+[1665] thread_a: heartbeat (sistema vivo)
+[1669] T_A: tentando pegar A
+[1671] T_A: pegou A
+[1683] T_A: tentando pegar B
+[1686] T_A: pegou B (tem A e B)
+[1688] T_A: soltou A e B
+[1765] thread_b: heartbeat (sistema vivo)
+[1769] T_B: tentando pegar 1
+[1771] T_B: pegou B
+[1783] T_B: tentando pegar 2
+[1786] T_B: pegou A (tem A e B)
+[1788] T_B: soltou A e B
+[1791] thread_a: heartbeat (sistema vivo)
+[1794] T_A: tentando pegar A
+[1797] T_A: pegou A
+[1809] T_A: tentando pegar B
+[1811] T_A: pegou B (tem A e B)
+[1814] T_A: soltou A e B
