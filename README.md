@@ -1,6 +1,6 @@
 # PSI-Microcontroladores2-Aula06
 
-Felipe Aihara - NUSP: 17889351 e Cleber Fernandes - NUSP: 17884589
+Felipe Aihara - NUSP: 17889351, Matheus Mendes - NUSP: 17841153 e Cleber Fernandes - NUSP: 17884589
 
 ### Cenários escolhidos e breve descrição
 
