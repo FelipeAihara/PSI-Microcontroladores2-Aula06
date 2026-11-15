@@ -1,0 +1,15 @@
+=== Race condition na serial ===
+Cada linha deveria sair inteira, de uma unica thread:
+
+Thread A: leitura do sensor numero 0
+Thread B: leitura do sensor numero 0
+Thread A: leitura do sensor numero 1
+Thread B: leitura do sensor numero 1
+Thread A: leitura do sensor numero 2
+Thread B: leitura do sensor numero 2
+Thread A: leitura do sensor numero 3
+Thread B: leitura do sensor numero 3
+Thread A: leitura do sensor numero 4
+Thread B: leitura do sensor numero 4
+
+=== Fim ===
