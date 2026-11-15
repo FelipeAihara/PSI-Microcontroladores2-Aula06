@@ -43,7 +43,7 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 ### Avaliação do codigo_matheus (race condition - serial; revisão feita por Felipe)
 
-- O código original estava misturando as mensagens da thread A e da B. Algo interessante, entretanto, é que isso só ocorria no caso em que PRIORIDADE_A = PRIORIDADE_B. Isso não ocorria nos casos em que a prioridade da thread A era diferente da thread B, mesmo sem mutex. Para corrigir esse erro, eu só coloquei um mutex na seção crítica do código, em que se usava a UART.
+- O código original estava misturando as mensagens da thread A e da B (evidência está em codigo_matheus_original/teste1.txt. Algo interessante, entretanto, é que isso só ocorria no caso em que PRIORIDADE_A = PRIORIDADE_B. Isso não ocorria nos casos em que a prioridade da thread A era diferente da thread B, mesmo sem mutex. Para corrigir esse erro, eu só coloquei um mutex na seção crítica do código, em que se usava a UART.
 
 ### Avaliação do codigo_cleber (race condition - contador; revisão feita por Matheus)
 
