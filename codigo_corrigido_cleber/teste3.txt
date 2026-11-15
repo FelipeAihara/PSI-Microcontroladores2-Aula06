@@ -1,0 +1,11 @@
+=== Demonstracao de Race Condition (Zephyr RTOS) ===
+Threads:........... 2
+Incrementos/thread: 2000
+Valor esperado:.... 4000
+
+Thread A terminou suas 2000 incrementacoes
+Thread B terminou suas 2000 incrementacoes
+
+Valor final do contador: 4000
+Valor esperado:          4000
+RESULTADO: OK - nenhuma atualizacao perdida
