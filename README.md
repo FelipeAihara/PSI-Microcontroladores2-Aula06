@@ -47,7 +47,4 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 ### Avaliação do codigo_cleber (race condition - contador; revisão feita por Matheus)
 
-- O que estava errado antes?
-- Como você corrigiu o erro?
-- O que mudou com a correção?
-- OBS.: colocar as evidências nas pastas de cada código (código_original/ e codigo_corrigido)
+- Assim como no caso "race condition - serial", o erro só aparecia quando as prioridades das threads eram iguais. Nesse caso, o erro era de que o contador assumia um valor diferente do esperado (2361 x 4000, resultado está em codigo_original_cleber/teste1.txt). Para resolver esse problema, implementei um mutex antes de chamar a função increment_shared_counter().
