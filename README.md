@@ -21,9 +21,9 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 | Caso de Teste | Pré-condição | Etapas de Teste | Pós-condição Esperada |
 |----------------|---------------|------------------|------------------------|
-| 1 | ... | ... | ... |
-| 2 | ... | ... | ... |
-| 3 | ... | ... | ... |
+| 1 | PRIORIDADE_A = PRIORIDADE_B | Rodar o código e ler a porta serial | Cada linha deveria sair inteira, de uma thread só |
+| 2 | PRIORIDADE_A > PRIORIDADE_B | Rodar o código e ler a porta serial | Cada linha deveria sair inteira, de uma thread só |
+| 3 | PRIORIDADE_A < PRIORIDADE_B | Rodar o código e ler a porta serial | Cada linha deveria sair inteira, de uma thread só |
 
 
 ### Planejtamento de testes (deadlock)
