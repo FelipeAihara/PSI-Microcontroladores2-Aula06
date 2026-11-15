@@ -1,0 +1,26 @@
+ting Zephyr OS build v4.5.0-660-ge08106651fc7 ***
+
+=== Demonstracao de Race Condition (Zephyr RTOS) ===
+Threads:........... 2
+Incrementos/thread: 2000
+Valor esperado:.... 4000
+
+Thread A terminou suas 2000 incrementacoes
+Thread B terminou suas 2000 incrementacoes
+
+Valor final do contador: 2361
+Valor esperado:          4000
+RESULTADO: FALHA - 1639 atualizacao(oes) perdida(s) por race condition
+*** Booting Zephyr OS build v4.5.0-660-ge08106651fc7 ***
+
+=== Demonstracao de Race Condition (Zephyr RTOS) ===
+Threads:........... 2
+Incrementos/thread: 2000
+Valor esperado:.... 4000
+
+Thread A terminou suas 2000 incrementacoes
+Thread B terminou suas 2000 incrementacoes
+
+Valor final do contador: 2361
+Valor esperado:          4000
+RESULTADO: FALHA - 1639 atualizacao(oes) perdida(s) por race condition
