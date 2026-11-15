@@ -1,0 +1,20 @@
+=== Race condition na serial ===
+Cada linha deveria sair inteira, de uma unica thread:
+
+TThhrreeaadd  AB::  lleeiittuurraa  ddoo  sseennssoorr  nnuummeerroo  00
+
+
+TThhrreeaadd  AB::  lleeiittuurraa  ddoo  sseennssoorr  nnuummeerroo  11
+
+
+TThhrreeaadd  AB::  lleeiittuurraa  ddoo  sseennssoorr  nnuummeerroo  22
+
+
+TThhrreeaadd  AB::  lleeiittuurraa  ddoo  sseennssoorr  nnuummeerroo  33
+
+
+TThhrreeaadd  AB::  lleeiittuurraa  ddoo  sseennssoorr  nnuummeerroo  44
+
+
+
+=== Fim ===
