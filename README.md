@@ -41,14 +41,14 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 - Como você corrigiu o erro?
 - OBS.: colocar as evidências nas pastas de cada código (código_original/ e codigo_corrigido)
 
-### Avaliação do codigo_cleber (race condition - serial; revisão feita por Matheus)
+### Avaliação do codigo_matheus (race condition - serial; revisão feita por Matheus)
 
 - O que estava errado antes?
 - Como você corrigiu o erro?
 - O que mudou com a correção?
 - OBS.: colocar as evidências nas pastas de cada código (código_original/ e codigo_corrigido)
 
-### Avaliação do codigo_matheus (race condition - contador; revisão feita por Felipe)
+### Avaliação do codigo_cleber (race condition - contador; revisão feita por Felipe)
 
 - O que estava errado antes?
 - Como você corrigiu o erro?
