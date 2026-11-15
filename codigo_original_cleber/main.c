@@ -1,92 +1,97 @@
 #include <zephyr/kernel.h>
-#include <zephyr/sys/atomic.h>
+#include <zephyr/sys/printk.h>
 
 /* ------------------------------------------------------------------ *
- * Sincronizacao baseada em semaforos para forcamento de Race Condition
- * 
- * Este codigo utiliza semaforos do Zephyr RTOS para coordenar estritamente
- * a ordem de execucao entre duas threads trabalhadoras e a thread principal,
- * criando uma janela controlada onde ocorre a perda de atualizacao (perda
- * de incremento) de forma deterministica, mesmo utilizando operacoes
- * atomicas parciais.
+ * Demonstracao de Race Condition em Zephyr RTOS
+ *
+ * Duas threads de MESMA prioridade incrementam, cada uma, um contador
+ * global NUM_INCREMENTS vezes. Se o acesso ao contador fosse atomico
+ * e protegido, o valor final teria que ser exatamente
+ * 2 * NUM_INCREMENTS. Sem sincronizacao, threads podem ser preemptadas
+ * (pelo scheduler, por tick de sistema ou por uma ISR) no MEIO do
+ * padrao ler-modificar-escrever, perdendo incrementos.
+ *
  * ------------------------------------------------------------------ */
 
-#define ITERATIONS 1000
-#define STACK_SIZE 1024
-#define THREAD_PRIORITY 5
+#define NUM_THREADS     2
+#define NUM_INCREMENTS  2000
+#define STACK_SIZE      1024
+#define THREAD_PRIORITY_A 5
+#define THREAD_PRIORITY_B 5
 
-/* Variavel atomica global que armazena o contador de pacotes de telemetria */
-static atomic_t telemetry_packets = ATOMIC_INIT(0);
+/*
+ * Alarga artificialmente a janela entre "ler" e "escrever" o recurso
+ * compartilhado. O bug (acesso nao atomico) ja existe sem isso - aqui
+ * so aumentamos a probabilidade de uma troca de contexto acontecer
+ * durante o acesso desprotegido, tornando a falha visivel de forma
+ * confiavel em poucas execucoes, em vez de depender da sorte de um
+ * tick de interrupcao cair exatamente entre duas instrucoes.
+ */
+#define CRITICAL_SECTION_DELAY_US 50
 
-/* Semáforos para controle de sincronização e alternancia de fases entre threads */
-K_SEM_DEFINE(read_ready, 0, 2);
-K_SEM_DEFINE(write_go, 0, 2);
-K_SEM_DEFINE(write_done, 0, 2);
-K_SEM_DEFINE(round_start, 0, 2);
+/* "volatile" aqui so evita que o compilador otimize o acesso embora;
+ * ela NAO torna o acesso atomico nem substitui sincronizacao. */
+static volatile uint32_t shared_counter;
 
-/* Definicao estatica das pilhas e estruturas de controle das threads */
-K_THREAD_STACK_DEFINE(worker_a_stack, STACK_SIZE);
-K_THREAD_STACK_DEFINE(worker_b_stack, STACK_SIZE);
-static struct k_thread worker_a_data;
-static struct k_thread worker_b_data;
-
-/* Funcao executada pelas threads trabalhadoras (Worker A e Worker B) */
-static void telemetry_worker(void *arg1, void *arg2, void *arg3)
+static void increment_shared_counter(void)
 {
-    ARG_UNUSED(arg1);
-    ARG_UNUSED(arg2);
-    ARG_UNUSED(arg3);
+	/* 1. LER o valor atual do recurso compartilhado */
+	uint32_t temp = shared_counter;
 
-    for (int i = 0; i < ITERATIONS; ++i) {
-        /* Aguarda o sinal da main para iniciar mais uma rodada de incremento */
-        k_sem_take(&round_start, K_FOREVER);
-        
-        /* Le o valor atual do contador compartilhado */
-        atomic_val_t packets = atomic_get(&telemetry_packets);
+	/* 2. "Processar" o valor - simula algum trabalho sobre o dado lido.
+	 *    E exatamente aqui, entre o passo 1 e o passo 3, que outra
+	 *    thread pode ser escalonada, ler o MESMO valor antigo e
+	 *    tambem calcular temp + 1 a partir dele. */
+	k_busy_wait(CRITICAL_SECTION_DELAY_US);
+	temp = temp + 1;
 
-        /* Ambos os threads capturam o mesmo valor antes que qualquer um possa escrever. */
-        k_sem_give(&read_ready);
-        k_sem_take(&write_go, K_FOREVER);
-
-        /*
-         * O acesso atomico individual e seguro, mas esta gravacao nao e
-         * atomica com a leitura precedente: a outra atualizacao e perdida.
-         */
-        atomic_set(&telemetry_packets, packets + 1);
-        k_sem_give(&write_done);
-    }
+	/* 3. ESCREVER o valor de volta no recurso compartilhado.
+	 *    Se outra thread fez o mesmo entre os passos 1 e 3, uma das
+	 *    duas escritas sera perdida: o incremento "desaparece". */
+	shared_counter = temp;
 }
 
-int main(void)
+static void counter_thread(void *p1, void *p2, void *p3)
 {
-    /* Primeira Thread (worker_a) */
-    k_thread_create(&worker_a_data, worker_a_stack, STACK_SIZE,
-            telemetry_worker, NULL, NULL, NULL,
-            THREAD_PRIORITY, 0, K_NO_WAIT);
+	const char *name = (const char *)p1;
 
-    /* Segunda Thread (worker_b) */
-    k_thread_create(&worker_b_data, worker_b_stack, STACK_SIZE,
-            telemetry_worker, NULL, NULL, NULL,
-            THREAD_PRIORITY, 0, K_NO_WAIT);
+	ARG_UNUSED(p2);
+	ARG_UNUSED(p3);
 
-    /* Loop principal que controla e sincroniza as iteracoes das threads */
-    for (int i = 0; i < ITERATIONS; ++i) {
-        k_sem_give(&round_start);
-        k_sem_give(&round_start);
-        k_sem_take(&read_ready, K_FOREVER);
-        k_sem_take(&read_ready, K_FOREVER);
-        k_sem_give(&write_go);
-        k_sem_give(&write_go);
-        k_sem_take(&write_done, K_FOREVER);
-        k_sem_take(&write_done, K_FOREVER);
-    }
+	for (int i = 0; i < NUM_INCREMENTS; i++) {
+		increment_shared_counter();
+	}
 
-    /* Exibe os resultados finais da execucao e as metricas de perdas */
-    printk("Pacotes registrados: %d\n",
-            (int)atomic_get(&telemetry_packets));
-    printk("Incrementos solicitados: %d\n", 2 * ITERATIONS);
-    printk("Atualizacoes perdidas: %d\n",
-            2 * ITERATIONS - (int)atomic_get(&telemetry_packets));
+	printk("Thread %s terminou suas %d incrementacoes\n", name, NUM_INCREMENTS);
+}
 
-    return 0;
+K_THREAD_DEFINE(thread_a, STACK_SIZE, counter_thread, "A", NULL, NULL,
+		THREAD_PRIORITY_A, 0, 0);
+
+K_THREAD_DEFINE(thread_b, STACK_SIZE, counter_thread, "B", NULL, NULL,
+		THREAD_PRIORITY_B, 0, 0);
+
+void main(void)
+{
+	uint32_t expected = NUM_THREADS * NUM_INCREMENTS;
+
+	printk("\n=== Demonstracao de Race Condition (Zephyr RTOS) ===\n");
+	printk("Threads:........... %d\n", NUM_THREADS);
+	printk("Incrementos/thread: %d\n", NUM_INCREMENTS);
+	printk("Valor esperado:.... %u\n\n", expected);
+
+	/* Espera as duas threads terminarem antes de ler o resultado final */
+	k_thread_join(thread_a, K_FOREVER);
+	k_thread_join(thread_b, K_FOREVER);
+
+	printk("\nValor final do contador: %u\n", shared_counter);
+	printk("Valor esperado:          %u\n", expected);
+
+	if (shared_counter == expected) {
+		printk("RESULTADO: OK - nenhuma atualizacao perdida\n");
+	} else {
+		printk("RESULTADO: FALHA - %u atualizacao(oes) perdida(s) "
+		       "por race condition\n",
+		       expected - shared_counter);
+	}
 }
