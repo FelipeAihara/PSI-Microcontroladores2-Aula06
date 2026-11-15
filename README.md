@@ -8,7 +8,7 @@ Felipe Aihara - NUSP: 17889351, Matheus Mendes - NUSP: 17841153 e Cleber Fernand
 
 - O primeiro cenário escolhido foi o de um contador com race condition (codigo_cleber). Existem duas threads: ambas tentam incrementar o valor
 de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com que o valor final do contador possa diferir do valor esperado.
-- O segundo cenário escolhido foi um em que a atomicidade foi violadada (codigo_matheus). Duas threads tentam usar o mesmo recurso compartilhado (a serial) simultaneamente, o que faz com que uma mensagem saia misturada com a outra.
+- O segundo cenário escolhido foi um em que a atomicidade foi violada (codigo_matheus). Duas threads tentam usar o mesmo recurso compartilhado (a serial) simultaneamente, o que faz com que uma mensagem saia misturada com a outra.
 - O terceiro cenário escolhido foi um de deadlock (codigo_felipe). A thread A tenta adquirir o mutex A e depois adquirir o mutex B. A thread B faz o contrário: primeiro tenta adquirir o mutex B e depois adquirir o mutex A.
 
 ### Planejamento de testes (race condition - contador)
