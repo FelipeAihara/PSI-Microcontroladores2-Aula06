@@ -39,7 +39,7 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 ### Avaliação do codigo_felipe (deadlock; revisão feita por Cleber)
 
-- Antes, estava ocorrendo um caso clássico de deadlock (a thread A ficava esperando a thread B soltar o mutex B, enquanto a thread B esperava a thread A soltar o mutex A). Por isso, as threads A e B paravam de enviar mensagens na serial (morriam). Para corrigir esse erro, adotei a solução de Dijkstra ao problema do jantar dos filósofos, em que se opta por adquirir o garfo (nesse caso, o mutex) de menor número primeiro. 
+- Antes, estava ocorrendo um caso clássico de deadlock (a thread A ficava esperando a thread B soltar o mutex B, enquanto a thread B esperava a thread A soltar o mutex A). Por isso, as threads A e B paravam de enviar mensagens na serial (evidência está em codigo_original_felipe/teste1.txt). Para corrigir esse erro, adotei a solução de Dijkstra ao problema do jantar dos filósofos, em que se opta por adquirir o garfo (nesse caso, o mutex) de menor número primeiro. 
 
 ### Avaliação do codigo_matheus (race condition - serial; revisão feita por Felipe)
 
