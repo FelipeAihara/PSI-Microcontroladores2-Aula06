@@ -2,6 +2,8 @@
 
 Felipe Aihara - NUSP: 17889351, Matheus Mendes - NUSP: 17841153 e Cleber Fernandes - NUSP: 17884589
 
+- OBS.: cada pasta desse repositório contém tanto o código quanto os testes realizados!
+
 ### Cenários escolhidos e breve descrição
 
 - O primeiro cenário escolhido foi o de um contador com race condition (codigo_cleber). Existem duas threads: ambas tentam incrementar o valor
@@ -37,9 +39,7 @@ de uma variável global. Entretanto, uma pode preemptar a outra, o que faz com q
 
 ### Avaliação do codigo_felipe (deadlock; revisão feita por Cleber)
 
-- O que estava errado antes?
-- Como você corrigiu o erro?
-- OBS.: colocar as evidências nas pastas de cada código (código_original/ e codigo_corrigido)
+- Antes, estava ocorrendo um caso clássico de deadlock (a thread A ficava esperando a thread B soltar o mutex B, enquanto a thread B esperava a thread A soltar o mutex A). Por isso, as threads A e B paravam de enviar mensagens na serial (morriam). Para corrigir esse erro, adotei a solução de Dijkstra ao problema do jantar dos filósofos, em que se opta por adquirir o garfo (nesse caso, o mutex) de menor número primeiro. 
 
 ### Avaliação do codigo_matheus (race condition - serial; revisão feita por Matheus)
 
